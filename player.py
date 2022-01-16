@@ -1,5 +1,5 @@
 import pygame
-from laser import Laser
+from fire import Fire
 
 
 class Player(pygame.sprite.Sprite):
@@ -11,7 +11,7 @@ class Player(pygame.sprite.Sprite):
         self.lasers = pygame.sprite.Group()
         self.shoot = True
         self.laser_time = 0
-        self.laser_cooldown = 100
+        self.laser_cooldown = 500
 
     def key_press(self):
         keys = pygame.key.get_pressed()
@@ -32,7 +32,7 @@ class Player(pygame.sprite.Sprite):
         self.krai()
 
     def shoot_laser(self):
-        self.lasers.add(Laser(self.rect.center, -5, self.rect.bottom))
+        self.lasers.add(Fire(self.rect.center, -5, self.rect.bottom))
 
     def reload(self):
         if not self.shoot:
