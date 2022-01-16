@@ -16,4 +16,4 @@ class Alien(pygame.sprite.Sprite):
             self.value = 300
 
     def update(self, direction):
-        self.rect.x += direction
+        self.rect.x += 2 * direction

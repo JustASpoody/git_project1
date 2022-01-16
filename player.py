@@ -11,7 +11,7 @@ class Player(pygame.sprite.Sprite):
         self.lasers = pygame.sprite.Group()
         self.shoot = True
         self.laser_time = 0
-        self.laser_cooldown = 500
+        self.laser_cooldown = 100
 
     def key_press(self):
         keys = pygame.key.get_pressed()
@@ -32,7 +32,7 @@ class Player(pygame.sprite.Sprite):
         self.krai()
 
     def shoot_laser(self):
-        self.lasers.add(Laser(self.rect.center, self.rect.bottom))
+        self.lasers.add(Laser(self.rect.center, -5, self.rect.bottom))
 
     def reload(self):
         if not self.shoot:

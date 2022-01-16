@@ -12,7 +12,7 @@ class Game:
 
         self.aliens = pygame.sprite.Group()
         self.alien_lasers = pygame.sprite.Group()
-        self.alien_setup(rows=5, cols=8)
+        self.alien_setup(rows=8, cols=8)
         self.alien_direction = 1
         self.font = pygame.font.Font(None, 50)
 
@@ -28,15 +28,15 @@ class Game:
         self.collision_checks()
         self.victory_message()
 
-    def alien_setup(self, rows, cols, x_distance=60, y_distance=48, x_offset=80, y_offset=220):
+    def alien_setup(self, rows, cols, x_distance=60, y_distance=48, x_offset=80, y_offset=10):
         for row_index, row in enumerate(range(rows)):
             for col_index, col in enumerate(range(cols)):
                 x = col_index * x_distance + x_offset
                 y = row_index * y_distance + y_offset
 
-                if row_index == 0:
+                if row_index <= 1:
                     alien_sprite = Alien('yellow', x, y)
-                elif 1 <= row_index <= 2:
+                elif 2 <= row_index <= 4:
                     alien_sprite = Alien('green', x, y)
                 else:
                     alien_sprite = Alien('red', x, y)
@@ -45,7 +45,7 @@ class Game:
     def alien_shoot(self):
         if self.aliens.sprites():
             random_alien = choice(self.aliens.sprites())
-            laser_sprite = Laser(random_alien.rect.center, height)
+            laser_sprite = Laser(random_alien.rect.center, 5, height)
             self.alien_lasers.add(laser_sprite)
 
     def alien_move(self):
@@ -54,11 +54,11 @@ class Game:
             if alien.rect.right >= width:
                 self.alien_direction = -1
                 for i in self.aliens.sprites():
-                    i.rect.bottom += 2
+                    i.rect.bottom += 3
             elif alien.rect.left <= 0:
                 self.alien_direction = 1
                 for i in self.aliens.sprites():
-                    i.rect.bottom += 2
+                    i.rect.bottom += 3
 
     def collision_checks(self):
 
@@ -90,10 +90,14 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((width, height))
     clock = pygame.time.Clock()
     game = Game()
+    ALIENLASER = pygame.USEREVENT
+    pygame.time.set_timer(ALIENLASER, 100)
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+            if event.type == ALIENLASER:
+                game.alien_shoot()
         screen.fill((0, 0, 0))
         game.run()
         pygame.display.flip()
