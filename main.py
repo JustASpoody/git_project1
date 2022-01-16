@@ -7,8 +7,8 @@ from aliens import Aliens
 
 class Game:
     def __init__(self):
-        player_sprite = Player((width / 2, height))
-        self.player = pygame.sprite.GroupSingle(player_sprite)
+        self.player_sprite = Player((width / 2, height))
+        self.player = pygame.sprite.GroupSingle(self.player_sprite)
 
         self.aliens = pygame.sprite.Group()
         self.alien_lasers = pygame.sprite.Group()
@@ -55,6 +55,9 @@ class Game:
     def alien_move(self):
         all_aliens = self.aliens.sprites()
         for alien in all_aliens:
+            if pygame.sprite.spritecollide(alien, self.player, False):
+                self.player_sprite.death()
+                self.lives = 0
             if alien.rect.right >= width:
                 self.alien_direction = -1
                 for i in self.aliens.sprites():
@@ -74,6 +77,8 @@ class Game:
                 if pygame.sprite.spritecollide(laser, self.player, False):
                     laser.kill()
                     self.lives -= 1
+        if self.lives < 1:
+            self.player_sprite.death()
 
     def final(self):
         if not self.aliens.sprites():
