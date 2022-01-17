@@ -33,18 +33,33 @@ class Game:
         self.alien_move()
         self.popadanie()
         self.final()
+        self.timer()
         self.livess()
 
     def livess(self):
         if self.lives > 0:
-            text = self.font.render('Lives: ' + str(self.lives), True, (255, 255, 255))
+            text = self.font.render('Жызни: ' + str(self.lives), True, (255, 255, 255))
             text_x = 10
             text_y = 10
         else:
-            text = self.font.render('Lives: 0', True, (255, 255, 255))
+            text = self.font.render('Жызни: 0', True, (255, 255, 255))
             text_x = 10
             text_y = 10
         screen.blit(text, (text_x, text_y))
+
+    def timer(self):
+        global last_time
+        if self.aliens.sprites() and self.lives > 0 and not end:
+            text = self.font.render(f"Секунды: {(pygame.time.get_ticks() - start_time) // 1000}", True, (255, 255, 255))
+            text_x = 200
+            text_y = 10
+            screen.blit(text, (text_x, text_y))
+            last_time = (pygame.time.get_ticks() - start_time) // 1000
+        else:
+            text = self.font.render(f"Секунды: {last_time}", True, (255, 255, 255))
+            text_x = 200
+            text_y = 10
+            screen.blit(text, (text_x, text_y))
 
     def alien_draw(self, rows, cols, x_distance=60, y_distance=48, x_offset=80, y_offset=60):
         for row_index, row in enumerate(range(rows)):
@@ -95,6 +110,8 @@ class Game:
             self.player_sprite.death()
 
     def final(self):
+        global end
+        end = False
         if not self.aliens.sprites():
             text = self.font.render("YOU WON", True, (255, 255, 255))
             text_x = width // 2 - 70
@@ -108,6 +125,7 @@ class Game:
                     text_x = width // 2 - 70
                     text_y = height // 2 - 50
                     screen.blit(text, (text_x, text_y))
+                    end = True
                     break
 
 
@@ -118,6 +136,7 @@ if __name__ == '__main__':
 
 
     def start_screen():
+        global start_time
         intro_text = ["ЗАСТАВКА! Нажми любую кнопку",
                       "Правила игры:",
                       "Используй A и D",
@@ -147,6 +166,7 @@ if __name__ == '__main__':
                     return  # начинаем игру
             pygame.display.flip()
             clock.tick(FPS)
+            start_time = pygame.time.get_ticks()
 
 
     def load_image(name):
@@ -165,6 +185,7 @@ if __name__ == '__main__':
     height = 600
     screen = pygame.display.set_mode((width, height))
     clock = pygame.time.Clock()
+    clock_timer = pygame.time.Clock()
     start_screen()
     game = Game()
     ALIENLASER = pygame.USEREVENT
