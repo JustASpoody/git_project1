@@ -3,6 +3,8 @@ from player import Player
 from random import choice
 from fire import Fire
 from aliens import Aliens
+import sys
+import os
 
 
 class Game:
@@ -12,7 +14,7 @@ class Game:
 
         self.aliens = pygame.sprite.Group()
         self.alien_lasers = pygame.sprite.Group()
-        self.alien_draw(rows=8, cols=8)
+        self.alien_draw(rows=7, cols=8)
         self.alien_direction = 1
         self.font = pygame.font.Font(None, 50)
         self.lives = 3
@@ -31,8 +33,20 @@ class Game:
         self.alien_move()
         self.popadanie()
         self.final()
+        self.livess()
 
-    def alien_draw(self, rows, cols, x_distance=60, y_distance=48, x_offset=80, y_offset=10):
+    def livess(self):
+        if self.lives > 0:
+            text = self.font.render('Lives: ' + str(self.lives), True, (255, 255, 255))
+            text_x = 10
+            text_y = 10
+        else:
+            text = self.font.render('Lives: 0', True, (255, 255, 255))
+            text_x = 10
+            text_y = 10
+        screen.blit(text, (text_x, text_y))
+
+    def alien_draw(self, rows, cols, x_distance=60, y_distance=48, x_offset=80, y_offset=60):
         for row_index, row in enumerate(range(rows)):
             for col_index, col in enumerate(range(cols)):
                 x = col_index * x_distance + x_offset
@@ -86,6 +100,7 @@ class Game:
             text_x = width // 2 - 70
             text_y = height // 2 - 50
             screen.blit(text, (text_x, text_y))
+            self.player_sprite.win()
         else:
             for i in self.aliens.sprites():
                 if i.rect.bottom >= 600 or self.lives <= 0:
@@ -97,11 +112,60 @@ class Game:
 
 
 if __name__ == '__main__':
+    def terminate():
+        pygame.quit()
+        sys.exit()
+
+
+    def start_screen():
+        intro_text = ["ЗАСТАВКА! Нажми любую кнопку",
+                      "Правила игры:",
+                      "Используй A и D",
+                      "     для движения",
+                      "Стреляй, нажимая пробел",
+                      "Не вздумай проиграть"]
+
+        fon = pygame.transform.scale(load_image('fon2.jpg'), (width, height))
+        screen.blit(fon, (0, 0))
+        font = pygame.font.Font(None, 30)
+        text_coord = 0
+        for line in intro_text:
+            string_rendered = font.render(line, 1, pygame.Color('white'))
+            intro_rect = string_rendered.get_rect()
+            text_coord += 10
+            intro_rect.top = text_coord
+            intro_rect.x = 10
+            text_coord += intro_rect.height
+            screen.blit(string_rendered, intro_rect)
+
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    terminate()
+                elif event.type == pygame.KEYDOWN or \
+                        event.type == pygame.MOUSEBUTTONDOWN:
+                    return  # начинаем игру
+            pygame.display.flip()
+            clock.tick(FPS)
+
+
+    def load_image(name):
+        fullname = name
+        # если файл не существует, то выходим
+        if not os.path.isfile(fullname):
+            print(f"Файл с изображением '{fullname}' не найден")
+            sys.exit()
+        image = pygame.image.load(fullname)
+        return image
+
+
+    FPS = 50
     pygame.init()
     width = 600
     height = 600
     screen = pygame.display.set_mode((width, height))
     clock = pygame.time.Clock()
+    start_screen()
     game = Game()
     ALIENLASER = pygame.USEREVENT
     pygame.time.set_timer(ALIENLASER, 500)
@@ -109,6 +173,7 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+                sys.exit()
             if event.type == ALIENLASER:
                 game.alien_shoot()
         screen.fill((0, 0, 0))

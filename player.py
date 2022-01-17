@@ -5,6 +5,8 @@ from fire import Fire
 class Player(pygame.sprite.Sprite):
     image = pygame.image.load('player.png')
     image_boom = pygame.image.load('boom.png')
+    cool_smile = pygame.image.load('cool smile.png')
+    cool_smile = pygame.transform.scale(cool_smile, (100, 100))
 
     def __init__(self, pos):
         super().__init__()
@@ -20,9 +22,9 @@ class Player(pygame.sprite.Sprite):
     def key_press(self):
         if self.is_already_dead:
             keys = pygame.key.get_pressed()
-            if keys[pygame.K_RIGHT]:
+            if keys[pygame.K_d]:
                 self.rect.x += self.speed
-            elif keys[pygame.K_LEFT]:
+            elif keys[pygame.K_a]:
                 self.rect.x -= self.speed
             if keys[pygame.K_SPACE]:
                 if self.shoot:
@@ -56,4 +58,11 @@ class Player(pygame.sprite.Sprite):
         self.image = Player.image_boom
         if self.is_already_dead:
             self.rect.y -= 50
+            self.is_already_dead = False
+
+    def win(self):
+        self.image = Player.cool_smile
+        if self.is_already_dead:
+            self.rect.y = 300
+            self.rect.x = 300
             self.is_already_dead = False

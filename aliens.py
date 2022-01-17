@@ -6,7 +6,7 @@ class Aliens(pygame.sprite.Sprite):
         super().__init__()
         file = color + '.png'
         self.image = pygame.image.load(file)
-        self.rect = self.image.get_rect(topleft=(x, y))
+        self.rect = self.image.get_rect(center=(x, y))
 
         if color == 'red':
             self.value = 100
